@@ -4,12 +4,11 @@
 #include <cmath>
 #include <iostream>
 #include "AAD.h"
-//#include "Option.h"
-#include "EuroOption.h"
-//#include "PRNG.h"
+#include "Option.h"
+
 
 size_t Node::numAdj = 1;
-bool Tape::multi = false;
+//bool Tape::multi = false;
 
 Tape globalTape;
 thread_local Tape* Number::tape = &globalTape;
@@ -45,20 +44,13 @@ int main() {
 	Number y{0.00};
 	Number sigma{0.1};
 	Number K{105};
-	Number t{0.5};
+	Number t{1};
 	/* Option constructor */
-	EuropeanCall<Number> Call{S0, r, y, sigma, K, t};
+	AsianOption<Number> Call{S0, r, y, sigma, K, t, 'c'};
 	/* Mark tape to be able to rewind to */
-	const size_t N = 100000;//'000;
+	const size_t N = 250000;
 	RNG generator{43121};
 	/* Putting variables on tape */
-	/*Call.s0.putOnTape();
-        Call.r.putOnTape();
-        Call.sigma.putOnTape();
-        Call.k.putOnTape();
-        Call.t.putOnTape();
-	putOnTape(Call.path.begin(), Call.path.end());
-	*/
 	Call.init();
 	/* Marking tape */
 	Number::tape->mark();
@@ -67,8 +59,6 @@ int main() {
 	/* Printing data about option */
 	Call.variables();
 	/* Propagate mark to start */
-	//Number::tape->rewind();
-	//(Call.payout).propagateMarkToStart();
 	Number::propagateMarkToStart();
 	/* Print sensitivities */
 	auto Delta = (Call.s0).adjoint()/N;

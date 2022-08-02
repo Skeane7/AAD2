@@ -8,6 +8,7 @@
 
 #include "blocklist.h"
 #include "Node.h"
+//#include <array> 
 
 #define BLOCKSIZE 16384
 #define DATASIZE  65536
@@ -27,12 +28,19 @@ public:
 	Node* recordNode() {
 		/* Creating node at the end of the tape */
 		Node* node = myNodes.emplace_back(N);
-		if(N>0) {
+		if constexpr(N>0) {
 			/* Adding derivatives and child adjoint pointers */
 			node->myDerivatives = myDers.emplace_back_multi<N>();
 			node->myAdjPtrs  = myChlPtrs.emplace_back_multi<N>();
 		}
 		return node;
+	}
+	
+	/* @Brief Function to reset all ajoints to 0 */
+	void resetAdjoints(){
+		for (Node& node : myNodes){
+                        node.myAdjoint = 0;
+                }
 	}
 
 	/* @Brief Function to clear tape */

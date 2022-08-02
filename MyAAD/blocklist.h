@@ -11,7 +11,8 @@
 #include <list>
 #include <iterator>
 #include <cstring>
-
+#include <iostream>
+using namespace std;
 /* Templated class that uses static arrays of size block_size */
 template<class T, size_t block_size>
 class blocklist {
@@ -30,9 +31,10 @@ class blocklist {
 
 	/* @Brief Creating a new array */
 	void newblock() {
-		data.emplace_back();Memmingen
+		data.emplace_back();
 		cur_block = last_block = prev(data.end());
 		next_space = cur_block->begin();
+		last_space = cur_block->end();
 	}
 	/* @Brief Iterate to next block */
 	void nextblock() {
@@ -158,7 +160,7 @@ public:
 			}
 			--cur_space;
 
-			return this*;
+			return *this;
 		}
 		/* Functions to access contained elements */
 		T& operator*() {
@@ -184,7 +186,7 @@ public:
 	/* Functions to give access to iterators */
 	/* @Brief Construct iterator at first available spot */
 	iterator begin() {
-		return iterator(data.being(), data.begin()->begin(), data.begin()->begin(), data.begin()->end());
+		return iterator(data.begin(), data.begin()->begin(), data.begin()->begin(), data.begin()->end());
 	}
 	/* @Brief Construct iterator at next available slot (at the end) */
 	iterator end() {
@@ -202,7 +204,7 @@ public:
 
 		while(it != start) {
 			if(&*it == element) {
-				return element;
+				return it;
 			}
 			--it;
 		}
