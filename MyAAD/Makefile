@@ -2,14 +2,14 @@
 #
 
 CXX := g++
-CXXFLAGS := -std=c++17 -lgsl -lm -O3#-Wall -Wextra
+CXXFLAGS := -std=c++17 -lgsl -lm #-O3-Wall -Wextra
 EXEC = main 
 all: $(EXEC)
 
 Option.o: Option.cc Option.h PRNG.h
 	$(CXX) -c Option.cc $(CXXFLAGS)
 
-main: main.cc Option.o 
+main: main.cc Option.o Portfolio.h 
 	$(CXX) -o main main.cc Option.o $(CXXFLAGS)
 
 #.PHONY:clean

@@ -8,7 +8,6 @@
 
 #include "blocklist.h"
 #include "Node.h"
-//#include <array> 
 
 #define BLOCKSIZE 16384
 #define DATASIZE  65536
