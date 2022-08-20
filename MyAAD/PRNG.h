@@ -30,7 +30,7 @@ public:
         }
         /* @Brief Function to return uniform (0,1) RV */
         double uniform(const double a, const double b){
-                return gsl_ran_flat(gen, a,b);
+                return gsl_ran_flat(gen, a, b);
         }
         /* @Brief Function to skip RVs when using multiple threads */
         void RNGskip(const size_t N, const int rank){

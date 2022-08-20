@@ -5,10 +5,13 @@
 #include <iostream>
 #include <mpi.h>
 #include "AAD.h"
-#include "EuroOption.h"
+#include "Option.h"
+#include "Portfolio.h"
+
+
 
 size_t Node::numAdj = 1;
-bool Tape::multi = false;
+//bool Tape::multi = false;
 
 Tape globalTape;
 thread_local Tape* Number::tape = &globalTape;
@@ -29,12 +32,13 @@ int main(int argc, char **argv) {
 	Number::tape->rewind();
 	/* Initailise and generate portfolio of options */
 	RNG generator2{1234};
-	int portfolio_size = 100;
-	std::vector<EuropeanOption<Number>> port = portfolio(portfolio_size, generator2);
+	int portfolio_size = 1;
+	Portfolio<Number> portfolio{portfolio_size};
+	portfolio.init(generator2);
 	/* Vector to hold portfolio value and Greeks */
 	std::vector<double> port_value(5,0);	
 	double skip = portfolio_size/nprocs;	
-	const size_t N = 100000;
+	const size_t N = 250000;
 	RNG generator{43121};
 	int start;
 	int end;
@@ -42,28 +46,28 @@ int main(int argc, char **argv) {
 	std::cout << "Rank = " << rank << ", Start = " << start << ", End = " << end << std::endl; 
 	if(rank != 0){
 		for(auto i=0;i<start;++i){
-			generator.RNGskip(int(255*port[i].t.value())*N, 1);
+			generator.RNGskip(int(252*portfolio.options[i].t.value())*N, 1);
 		}
 	}
 	/* Looping over options to calculate price and Greeks */
 	for(auto i=start;i<end;++i){
 		/* Putting variables on tape */
-		port[i].init();
+		portfolio.options[i].init();
 		//generator.RNGskip(port[i].t.value()*N/nprocs, rank);
 		/* Marking tape */
 		Number::tape->mark();
 		/* Pricing option */
-		port[i].pricer(generator, N);
+		portfolio.options[i].pricer(generator, N);
 		/* Propagate mark to start */
 		Number::propagateMarkToStart();
 		/* Print sensitivities */
 		std::cout << "Rank = " << rank << "\n";
-		port[i].variables();
-		port_value[0] += port[i].payout.value();
-		port_value[1] += port[i].s0.adjoint()/N;
-		port_value[2] += port[i].sigma.adjoint()/N;
-		port_value[3] += port[i].r.adjoint()/N;
-		port_value[4] += port[i].t.adjoint()/N;
+		portfolio.options[i].variables();
+		port_value[0] += portfolio.options[i].payout.value();
+		port_value[1] += portfolio.options[i].s0.adjoint()/N;
+		port_value[2] += portfolio.options[i].sigma.adjoint()/N;
+		port_value[3] += portfolio.options[i].r.adjoint()/N;
+		port_value[4] += portfolio.options[i].t.adjoint()/N;
 		Number::tape -> clear();
 	}
 	/* Printing Greeks to screen */

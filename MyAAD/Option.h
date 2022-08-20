@@ -40,4 +40,7 @@ public:
 	bool style; /* To differentiation between European and Asian */
 };
 
+
+template<typename T>
+void bumpReval(Option<T> product, const size_t seed, const size_t N);
 #endif

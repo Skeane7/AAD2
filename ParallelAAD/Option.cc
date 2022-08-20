@@ -221,6 +221,7 @@ void bumpReval(Option<T> product, const size_t seed, const size_t N){
 }
 
 
+
 template class Option<Number>;
 template class Option<double>;
 template void bumpReval<Number>(Option<Number>, const size_t, const size_t);

@@ -16,13 +16,13 @@ int main() {
 	/* Ensuring tape is clear */
 	Number::tape->rewind();
 	/* Creating Portfolio of Options */
-	RNG generator2{1234};
+	RNG generator2{1875};
 	int port_size = 1;
 	Portfolio<Number> portfolio{port_size};	
 	portfolio.init(generator2);
 	std::vector<double> port_value(5,0);
 	/* Intialising PRNG generator and number of paths */
-	const size_t N = 5;
+	const size_t N = 1000000;
 	RNG generator{43121};
 	/* Looping over options and accumulating Greeks */
 	for(auto i=0;i<port_size;++i){
@@ -50,5 +50,6 @@ int main() {
 	std::cout << "Vega = "  << port_value[2] << std::endl;
 	std::cout << "Rho = "   << port_value[3] << std::endl;
 	std::cout << "Theta = " << port_value[4] << std::endl; 
+	std::cout << "Using Bump and Reval \n";
         return 0;
 }
