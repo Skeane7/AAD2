@@ -18,10 +18,10 @@ public:
 	/* Initialise vector with random options */
 	void init(RNG generator) {
 		std::string type;
-        	Number s0{floor(generator.uniform(50,150))};
- 	        Number r{floor(generator.uniform(0,5))/100};
-        	Number sigma{floor(generator.uniform(10, 50))/100};
-        	Number y{0};
+        	T s0{floor(generator.uniform(50,150))};
+ 	        T r{floor(generator.uniform(0,5))/100};
+        	T sigma{floor(generator.uniform(10, 50))/100};
+        	T y{0};
 		int a;
 		for(auto i=0;i<N;++i){
 			a = int(generator.uniform(0,4));
@@ -39,10 +39,9 @@ public:
 					type = "ep";
 					break;
 			}
-			Number t{generator.uniform(1,24)/12};
-			double strike = 5*round(s0.value()/5) + 5*round(generator.uniform(-10,10)/5);
-			std::cout << type << std::endl;
-			options.emplace_back(Option(s0, r, y, sigma, Number{strike}, t, type));
+			T t{generator.uniform(1,24)/12};
+			double strike = 5*round(getvalue(s0)/5) + 5*round(generator.uniform(-10,10)/5);
+			options.emplace_back(Option(s0, r, y, sigma, T{strike}, t, type));
 		}
 	}
 	/* Variables */
@@ -51,5 +50,5 @@ public:
 };
 
 template class Portfolio<Number>;
-
+template class Portfolio<double>;
 #endif // PORTFOLIO

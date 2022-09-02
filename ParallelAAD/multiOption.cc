@@ -1,3 +1,13 @@
+/*
+ * @Author Shane Keane
+ * @File multiOption.cc
+ * @Brief Applying parallel AAD implementation to
+ *        calculate Greeks for a portfolio of Options
+ * @Date 08-06-2022
+ * @Version 1.0
+ * */
+
+
 #include <memory>
 #include <string>
 #include <queue>
@@ -8,10 +18,7 @@
 #include "Option.h"
 #include "Portfolio.h"
 
-
-
 size_t Node::numAdj = 1;
-//bool Tape::multi = false;
 
 Tape globalTape;
 thread_local Tape* Number::tape = &globalTape;
@@ -28,20 +35,21 @@ int main(int argc, char **argv) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-	/* Rewind tape to make sure it is clear */
+	/* Clear tape */
 	Number::tape->rewind();
 	/* Initailise and generate portfolio of options */
 	RNG generator2{1234};
-	int portfolio_size = 1;
+	int portfolio_size = 5;
 	Portfolio<Number> portfolio{portfolio_size};
 	portfolio.init(generator2);
+
 	/* Vector to hold portfolio value and Greeks */
 	std::vector<double> port_value(5,0);	
-	double skip = portfolio_size/nprocs;	
+	//double skip = portfolio_size/nprocs;	
 	const size_t N = 250000;
-	RNG generator{43121};
-	int start;
-	int end;
+	/* Creating start and end index for each process */
+	RNG generator{42};
+	int start, end;
 	if(decomp1d(portfolio_size, nprocs, rank, &start, &end)!=0) exit(0);
 	std::cout << "Rank = " << rank << ", Start = " << start << ", End = " << end << std::endl; 
 	if(rank != 0){

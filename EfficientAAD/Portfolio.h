@@ -41,7 +41,6 @@ public:
 			}
 			Number t{generator.uniform(1,24)/12};
 			double strike = 5*round(s0.value()/5) + 5*round(generator.uniform(-10,10)/5);
-			std::cout << type << std::endl;
 			options.emplace_back(Option(s0, r, y, sigma, Number{strike}, t, type));
 		}
 	}

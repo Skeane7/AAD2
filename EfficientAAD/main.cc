@@ -22,7 +22,7 @@ int main() {
 	portfolio.init(generator2);
 	std::vector<double> port_value(5,0);
 	/* Intialising PRNG generator and number of paths */
-	const size_t N = 1000000;
+	const size_t N = 100000;
 	RNG generator{43121};
 	/* Looping over options and accumulating Greeks */
 	for(auto i=0;i<port_size;++i){
@@ -50,6 +50,5 @@ int main() {
 	std::cout << "Vega = "  << port_value[2] << std::endl;
 	std::cout << "Rho = "   << port_value[3] << std::endl;
 	std::cout << "Theta = " << port_value[4] << std::endl; 
-	std::cout << "Using Bump and Reval \n";
         return 0;
 }

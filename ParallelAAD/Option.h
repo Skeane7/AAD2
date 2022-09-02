@@ -40,8 +40,10 @@ public:
 	bool style; /* To differentiation between European and Asian */
 };
 
+/* Functions to return value of Number and double to help with templates */
+double getvalue(Number x);
+double getvalue(double x);
 
-std::vector<Option<Number>> portfolio(const int N, RNG generator);
 
 template<typename T>
 void bumpReval(Option<T> product, const size_t seed, const size_t N);

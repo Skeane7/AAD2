@@ -2,7 +2,7 @@
 #
 
 CXX := g++
-CXXFLAGS := -std=c++17 -lgsl -lm -lblas -O3#-Wall -Wextra
+CXXFLAGS := -std=c++17 -lgsl -lm -lblas -O3 -Wall -Wextra
 EXEC = main BumpReval basicEx
 all: $(EXEC)
 

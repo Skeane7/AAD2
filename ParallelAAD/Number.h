@@ -23,12 +23,6 @@ class Number {
 	}
 	/* @Brief Giving access to Node for friends */
 	Node& node() const {
-		/* Find myNode and check if it is found */
-		//auto it = tape->find(myNode);
-		//if(it == tape->end()){
-		//	throw runtime_error("Put a breakpoint here");
-		//}
-		/* Why const_cast ? */
 		return const_cast<Node&>(*myNode);
 	}
 	/* Unary operations */
@@ -92,7 +86,7 @@ public:
 	explicit operator double& () { 
 		return myValue;
 	}
-	explicit operator double const () {
+	explicit operator double() {
 		return myValue;
 	}
 	/* Functions to access value and adjoint */

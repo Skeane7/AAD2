@@ -1,3 +1,12 @@
+/*
+ * @Author Shane Keane
+ * @File singleOption.cc
+ * @Brief Applying parallel AAD implementation to 
+ * 	  calculate Greeks for a single Option
+ * @Date 08-06-2022
+ * @Version 1.0
+ * */
+
 #include <memory>
 #include <string>
 #include <queue>
@@ -38,8 +47,6 @@ int main(int argc, char **argv) {
 	Number::tape->mark();
 	/* Pricing option */
 	Call.pricer(generator, N/nprocs);
-	/* Printing data about option */
-	Call.variables();
 	/* Propagate mark to start */
 	Call.payout.propagateToStart();
 	/* Print sensitivities */
@@ -63,10 +70,14 @@ int main(int argc, char **argv) {
                    MPI_SUM, 0, MPI_COMM_WORLD);
 
 	/* Printing Greeks to screen */
-	std::cout << "Delta = " << globalDelta << std::endl;
-	std::cout << "Vega = "  << globalVega  << std::endl;
-	std::cout << "Rho = "   << globalRho   << std::endl;
-	std::cout << "Theta = " << globalTheta << std::endl; 
-	MPI_Finalize();
+	if(rank == 0) {
+		Call.variables();
+		std::cout << "Delta = " << globalDelta << std::endl;
+		std::cout << "Vega = "  << globalVega  << std::endl;
+		std::cout << "Rho = "   << globalRho   << std::endl;
+		std::cout << "Theta = " << globalTheta << std::endl; 
+		MPI_Finalize();
+	}
+	
         return 0;
 }

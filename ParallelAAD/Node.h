@@ -9,7 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <cblas.h> 
+//#include <cblas.h> 
 
 class Node {
 	/* Friend classes for easy access to necessary parameters */
@@ -41,7 +41,7 @@ public:
 	void propagateOne(){
 		if(myAdjoint == 0 || numChl == 0) {return;}
 		/* Adjoint accumulation according to formula */
-		for(auto i=0; i<numChl; ++i){
+		for(size_t i=0; i<numChl; ++i){
 			*(myAdjPtrs[i]) += myDerivatives[i]*myAdjoint;
 		}
 		/* Can also use cblas to apply formula */

@@ -1,3 +1,12 @@
+/*
+ * @Author Shane Keane
+ * @File main.cc
+ * @Brief Applying first AAD implementation to
+ *        calculate adjoints of Black Scholes Formula
+ * @Date 01-06-2022
+ * @Version 1.0
+ * */
+
 #include <vector>
 #include <memory>
 #include <string>

@@ -22,6 +22,15 @@ size_t GetMemoryUsage() {
 	return (size_t)(ru.ru_maxrss*1024L);
 }
 
+/* Functions to return value of Number and double to help with templates */
+double getvalue(Number x){
+	return x.value();
+}
+
+double getvalue(double x){
+	return x;
+}
+
 /* @Brief Class constructor */
 template<typename T>
 Option<T>::Option(T _S, T _R, T _Y, T _Sig, T _Strike, T _time, const std::string _type):
@@ -104,29 +113,14 @@ template<class T>
 void Option<T>::simulate(RNG generator){
         /* Getting Gaussian RVs */
         auto Ndays{t*252};
-        rngs = generator.gaussian(int(Ndays.value()));
+        rngs = generator.gaussian(int(getvalue(Ndays)));
         /* Setting path first step to be 1, we will later multiply by S0 */
         path[0]=T{1};
         /* Creating path */
-        for(auto j=1;j<int(Ndays.value());++j){
+        for(auto j=1;j<int(getvalue(Ndays));++j){
 		path[j]=path[j-1]*exp(dt + dx*rngs[j-1]);
-		//path[j]=path[j-1]*(exp(r*dt) + dx*rngs[j-1]);
 	}
 }
-
-/* @Brief Function to create path of stock price */
-template<>
-void Option<double>::simulate(RNG generator){
-	/* Getting Gaussian RVs */
-        rngs = generator.gaussian(int(252*t));
-        /* Setting path first step to be 1, we will later multiply by S0 */
-	path[0]=1;
-        /* Creating path */
-        for(auto j=1;j<int(252*t);++j){
-                path[j]=path[j-1]*(exp(dt) + dx*rngs[j-1]);
-        }
-}
-
 
 /* @Brief Payoff function for Option */
 template<typename T>
@@ -138,7 +132,7 @@ T Option<T>::payoff(){
 		for(auto& i: path){
 			average += i;
 		}
-		average *= (s0/Ndays);
+		average *= (s0/getvalue(Ndays));
 		if(type){
 			return max(exp(-r*t)*(average-k),T{0});
 		} else {
@@ -151,12 +145,14 @@ T Option<T>::payoff(){
 	} else if(!type) {
 		return max(exp(-r*t)*(k-s0*path.back()), T{0});
 	}
+	throw invalid_argument("Option Type not Valid");
+	return T{0};
 }
 
 /* @Brief Function to generate path and accumulate payout of option for Number class */
 template<>
 void Option<Number>::pricer(RNG generator, const size_t N){
-        for(auto i=0; i<N; ++i){
+        for(size_t i=0; i<N; ++i){
                 /* Generate stock path */
                 simulate(generator);
                 /* Store payout */
@@ -175,7 +171,7 @@ void Option<Number>::pricer(RNG generator, const size_t N){
 
 template<>
 void Option<double>::pricer(RNG generator, const size_t N){
-        for(auto i=0; i<N; ++i){
+        for(size_t i=0; i<N; ++i){
                 /* Generate stock path */
 		simulate(generator);
                 payout += payoff();
@@ -195,29 +191,25 @@ void bumpReval(Option<T> product, const size_t seed, const size_t N){
 	temp1.s0 *= 1.01;	
 	temp1.init();
 	temp1.pricer(generator, N);
-	//std::cout << "Delta = " << (temp1.payout-product.payout)/(product.s0*0.01) << "\n"; 
-	std::cout << (temp1.payout-product.payout)/(product.s0*0.01) << "\n";
+	std::cout << "Delta = " << (temp1.payout-product.payout)/(product.s0*0.01) << "\n"; 
 
         RNG generator2{seed};
         temp3.sigma *= 1.01;
         temp3.init();
         temp3.pricer(generator2, N);
-        //std::cout << "Vega = " << (temp3.payout-product.payout)/(temp3.sigma*.01) << "\n";
-	std::cout << (temp3.payout-product.payout)/(temp3.sigma*.01) << "\n";
+        std::cout << "Vega = " << (temp3.payout-product.payout)/(temp3.sigma*.01) << "\n";
 
 	RNG generator1{seed};
 	temp2.r *= 1.01;
         temp2.init();
 	temp2.pricer(generator1, N);
-	//std::cout << "Rho = " << (temp2.payout-product.payout)/(temp2.r*.01) << "\n";
-	std::cout << (temp2.payout-product.payout)/(temp2.r*.01) << "\n";
+	std::cout << "Rho = " << (temp2.payout-product.payout)/(temp2.r*.01) << "\n";
 
 	RNG generator3{seed};
         temp4.t *= 1.01;
         temp4.init();
         temp4.pricer(generator3, N);
-        //std::cout << "Theta = " << (temp4.payout-product.payout)/(temp4.t*.01) << "\n";
-	std::cout << (temp4.payout-product.payout)/(temp4.t*.01) << "\n";
+        std::cout << "Theta = " << (temp4.payout-product.payout)/(temp4.t*.01) << "\n";
 }
 
 

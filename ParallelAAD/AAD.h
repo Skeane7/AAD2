@@ -7,10 +7,10 @@
  * @Version 1.0
  */
 
-
 #include <memory>
 #include "Number.h"
 
+/* Function to put every item in a container on tape */
 template <class IT>
 inline void putOnTape(IT begin, IT end){
 	for_each(begin, end, [](Number& n) {n.putOnTape(); });

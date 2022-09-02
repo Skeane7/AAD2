@@ -95,9 +95,9 @@ public:
 		return &*old_next;
 	}
 	/* @Brief Function to call emplace back multiple times */
-	template<size_t n>
+	template<long n>
 	T* emplace_back_multi() {
-		if (std::distance(next_space, last_space) <n) {
+		if (std::distance(next_space, last_space) < n) {
 			nextblock();
 		}
 		auto old_next = next_space;
